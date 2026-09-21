@@ -87,7 +87,6 @@ for (const file of [
     'SECURITY.md',
     'vite.config.ts',
     'vitest.config.ts',
-    'wrangler.toml',
     ...fs.readdirSync(process.cwd()).filter((name) => /^tsconfig.*\.json$/.test(name)),
 ]) {
     const target = path.resolve(file);

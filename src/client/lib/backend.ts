@@ -1,6 +1,6 @@
 import { IS_TINY_BACKEND } from './runtime'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? 'https://go.mrsunshine.cn/prod-api/' : '/api')
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api'
 
 export function backendPath(path: string, tiny = IS_TINY_BACKEND, base = API_BASE): string {
   if (!path.startsWith('/api/')) throw new Error('API path must be local')

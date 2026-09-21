@@ -138,7 +138,7 @@ const failures = []
 const roots = ['src', 'scripts', 'tests']
 const files = [
   ...roots.filter((root) => fs.existsSync(root)).flatMap((root) => [...walk(path.resolve(root))]),
-  ...['vite.config.ts', 'vitest.config.ts', 'index.html', 'wrangler.toml'].map((file) => path.resolve(file)),
+  ...['vite.config.ts', 'vitest.config.ts', 'index.html'].map((file) => path.resolve(file)),
 ]
 
 for (const file of files) {

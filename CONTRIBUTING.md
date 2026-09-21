@@ -18,9 +18,9 @@ npm ci
 npm run dev
 ```
 
-The local application is available at `http://localhost:7712`. Wrangler stores local D1, R2, and Durable Object state under `.wrangler/state/`.
+Use Node 24. The local application is available at `http://localhost:7712`; `.env.development` defines the Go proxy target. Start the sibling `tiny-blog-go` service separately. `.env.production` defines the public production API base. Put local overrides in `.env.development.local` or `.env.production.local`; never place credentials in frontend environment variables.
 
-`npm run dev` omits the Workers AI binding so startup does not wait for a remote AI connection. The local Worker and MCP remain available, with keyword search instead of AI semantic search. Use `npm run dev:ai` to test real Workers AI (requires Cloudflare authentication and network access). Production builds keep the AI binding from `wrangler.toml`.
+`npm run build:prod` builds the static production frontend in `dist/client`. `npm run build` is its default alias. `npm run preview` serves the existing production output without rebuilding. The standalone demo remains available through `dev:demo` and `build:demo`.
 
 ## Required checks
 
@@ -34,7 +34,7 @@ npm run test:unit
 npm run build
 ```
 
-Changes to Worker routes, persistence, synchronization, imports, exports, or backups should also run the isolated end-to-end suite described by `npm run test:e2e`.
+Backend changes must run the relevant Go tests and isolated integration checks in `tiny-blog-go`. The historical Worker source and `scripts/e2e.mjs` are migration references; they are outside the active build and must not be used against the Go production API.
 
 ## Releases
 

@@ -19,9 +19,11 @@ describe('frontend build environments', () => {
     vi.stubEnv('INKSTONE_API_TARGET', 'http://127.0.0.1:19081')
     const resolved = await config({ command: 'serve', mode: 'development' })
     expect(resolved.server?.proxy?.['/api/inkstone']).toMatchObject({ target: 'http://127.0.0.1:19081' })
+    expect(resolved.define?.['import.meta.env.VITE_API_CACHE_KEY']).toBe(JSON.stringify('http://127.0.0.1:19081'))
   })
 
   it('builds a static production frontend using the configured API prefix', async () => {
+    vi.stubEnv('VITE_API_BASE_URL', undefined)
     const env = loadEnv('production', process.cwd(), '')
     expect(env.VITE_API_BASE_URL).toBe('https://go.mrsunshine.cn/prod-api/')
     const resolved = await config({ command: 'build', mode: 'production' })
