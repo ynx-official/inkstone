@@ -443,7 +443,7 @@ export function extractWikiLinks(content: string): WikiLink[] {
 }
 
 const ATTACHMENT_REFERENCE_RE =
-  /(?:^|[\s(<"'=])\/api\/files\/([0-9a-hjkmnp-tv-z]{26})(?=$|[\s>)\]"'?#])/g
+  /(?:^|[\s(<"'=])\/api\/(?:inkstone\/)?files\/([0-9a-hjkmnp-tv-z]{26}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?=$|[\s>)\]"'?#])/g
 
 
 export function extractAttachmentIds(content: string): string[] {
@@ -479,6 +479,8 @@ function markdownExampleBodies(text: string): string[] {
         // A closing fence may only be followed by spaces or tabs.
         bodies.push(collecting.join('\n'))
         collecting = null
+      } else {
+        collecting.push(line)
       }
       continue
     }

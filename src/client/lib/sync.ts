@@ -4,6 +4,8 @@ import { CLIENT_ID } from './api'
 import { createBroadcast, type BroadcastPayload } from './db'
 import { acknowledgeOutboxBaseAdvanced, acknowledgeOutboxResult, useNotes } from '../store/notes'
 import { useSession } from '../store/session'
+import { IS_TINY_BACKEND } from './runtime'
+import { backendPath } from './backend'
 
 
 const HEARTBEAT_MS = 25_000
@@ -12,6 +14,7 @@ const MAX_BACKOFF_MS = 30_000
 
 export class SyncEngine {
   private socket: WebSocket | null = null
+  private events: EventSource | null = null
   private pollTimer = 0
   private heartbeatTimer = 0
   private reconnectTimer = 0
@@ -52,6 +55,7 @@ export class SyncEngine {
       window.clearInterval(this.heartbeatTimer)
       this.socket?.close()
       this.socket = null
+      this.closeEvents()
     }
   }
 
@@ -81,6 +85,7 @@ export class SyncEngine {
     window.clearTimeout(this.leadershipTimer)
     this.socket?.close()
     this.socket = null
+    this.closeEvents()
     this.broadcast.close()
   }
 
@@ -177,10 +182,26 @@ export class SyncEngine {
     window.clearInterval(this.heartbeatTimer)
     this.socket?.close()
     this.socket = null
+    this.closeEvents()
   }
 
 
   private connect(): void {
+    if (IS_TINY_BACKEND) {
+      if (this.disposed || this.events || !this.isLeader || !this.realtimeEnabled) return
+      const events = new EventSource(backendPath('/api/sync/events'), { withCredentials: true })
+      this.events = events
+      events.onopen = () => { this.failures = 0; this.schedulePull(0) }
+      events.addEventListener('changed', (event) => {
+        if (this.disposed || this.events !== events) return
+        try {
+          const message = JSON.parse((event as MessageEvent<string>).data) as RealtimeMessage
+          if (message.type === 'changed' && message.cursor > useNotes.getState().cursor) this.schedulePull(150)
+        } catch { }
+      })
+      events.onerror = () => { if (!this.disposed) this.schedulePull(300) }
+      return
+    }
     if (this.disposed || this.socket) return
     try {
       const url = new URL('/api/sync/ws', location.href)
@@ -253,6 +274,11 @@ export class SyncEngine {
       }
       this.socket.send(JSON.stringify({ type: 'ping' } satisfies RealtimeMessage))
     }, HEARTBEAT_MS)
+  }
+
+  private closeEvents(): void {
+    this.events?.close()
+    this.events = null
   }
 
 

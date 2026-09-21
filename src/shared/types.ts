@@ -25,7 +25,7 @@ export interface SiteInfo {
 
   kvEnabled: boolean
 
-  attachmentStorage: 'r2' | 'kv' | null
+  attachmentStorage: 'r2' | 'kv' | 's3' | null
 
   realtimeEnabled: boolean
   version: string

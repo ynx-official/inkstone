@@ -1,5 +1,6 @@
 import { backupRunsResource, backupTargetsResource, mcpResource, statsResource, totpResource } from './resources'
 import { useSession } from '../../store/session'
+import { IS_TINY_BACKEND } from '../../lib/runtime'
 
 export type SettingsSection = 'appearance' | 'editor' | 'backup' | 'sync' | 'mcp' | 'account' | 'data' | 'about'
 
@@ -19,7 +20,7 @@ export function warmSettingsSection(section: SettingsSection): void {
   const resources = section === 'backup' ? [backupTargetsResource, backupRunsResource]
     : section === 'mcp' ? [mcpResource]
     : section === 'data' ? [statsResource]
-    : section === 'account' ? [totpResource] : []
+    : section === 'account' && !IS_TINY_BACKEND ? [totpResource] : []
   resources.forEach((resource) => { void resource.load().catch(() => {}) })
 }
 

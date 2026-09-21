@@ -9,6 +9,13 @@ import DOMPurify from 'dompurify';
 import { parseFrontMatter, slugifyHeading } from '@shared/markdown-utils';
 import { getLocale, t } from '../i18n';
 import { encodeDataValue } from './data-attr';
+import { backendFileUrl } from '../backend';
+DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+    for (const attribute of ['src', 'href', 'poster']) {
+        const value = node.getAttribute(attribute);
+        if (value?.startsWith('/api/files/')) node.setAttribute(attribute, backendFileUrl(value));
+    }
+});
 export interface Heading {
     level: number;
     text: string;

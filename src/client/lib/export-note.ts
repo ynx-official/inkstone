@@ -1,4 +1,6 @@
 import { renderMarkdown } from './markdown/renderer'
+import { backendFileUrl, backendPath } from './backend'
+import { IS_TINY_BACKEND } from './runtime'
 
 const KATEX_CSS_URL = 'https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css'
 
@@ -70,10 +72,14 @@ async function waitForPrintReady(iframe: HTMLIFrameElement): Promise<void> {
 
 async function inlinePrivateImages(html: string): Promise<string> {
   const doc = new DOMParser().parseFromString(html, 'text/html')
-  const images = [...doc.querySelectorAll<HTMLImageElement>('img[src^="/api/files/"]')]
+  const filePrefix = backendPath('/api/files/')
+  const images = [...doc.querySelectorAll<HTMLImageElement>('img[src]')].filter((image) => {
+    const src = image.getAttribute('src')!
+    return src.startsWith('/api/files/') || src.startsWith(filePrefix)
+  })
   await Promise.all(images.map(async (image) => {
     try {
-      const response = await fetch(image.getAttribute('src')!, { credentials: 'same-origin' })
+      const response = await fetch(backendFileUrl(image.getAttribute('src')!), { credentials: IS_TINY_BACKEND ? 'include' : 'same-origin' })
       if (!response.ok)
         return
       const dataUrl = await blobToDataUrl(await response.blob())

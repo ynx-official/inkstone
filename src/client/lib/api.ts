@@ -38,6 +38,8 @@ import type {
 } from '@shared/types'
 import { publishBroadcast } from './db'
 import { getLocale, t, translateApiError } from './i18n'
+import { backendPath, decodeTinyResponse } from './backend'
+import { IS_TINY_BACKEND } from './runtime'
 
 
 export const CLIENT_ID =
@@ -109,12 +111,12 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   }
 
   try {
-    const response = await fetch(path, {
+    const response = await fetch(backendPath(path), {
       method,
       headers,
       body: payload,
       signal: timeoutController?.signal ?? signal,
-      credentials: 'same-origin',
+      credentials: IS_TINY_BACKEND ? 'include' : 'same-origin',
     })
 
     const notifyOtherTabs = method !== 'GET' && shouldNotifyOtherTabs(path)
@@ -135,6 +137,15 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
           invalidJson = true
         }
       }
+    }
+
+    if (IS_TINY_BACKEND && isJson && !invalidJson) {
+      const decoded = decodeTinyResponse(data, response.status)
+      if (decoded.error) {
+        const error = decoded.error
+        throw new ApiError(error.status, error.code, error.message, error.details)
+      }
+      data = decoded.data
     }
 
     if (!response.ok) {
@@ -176,13 +187,13 @@ function isJsonResponse(response: Response): boolean {
 async function fetchDownload(path: string, fallbackName: string): Promise<{ response: Response; filename: string }> {
   let response: Response
   try {
-    response = await fetch(path, {
+    response = await fetch(backendPath(path), {
       headers: {
         [CLIENT_HEADER]: '1',
         'X-Inkstone-Origin': CLIENT_ID,
         'Accept-Language': getLocale(),
       },
-      credentials: 'same-origin',
+      credentials: IS_TINY_BACKEND ? 'include' : 'same-origin',
     })
   } catch {
     throw new ApiError(0, 'offline', t("api.no_network_connection"))

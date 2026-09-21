@@ -69,7 +69,7 @@ const config: UserConfigFnPromise = async ({ mode, command }) => ({
     katexWoff2Only(),
     tailwindcss(),
     inkstonePwa(),
-    ...(mode === 'demo'
+    ...(mode === 'demo' || mode === 'tiny'
       ? []
       : [
           (await import('@cloudflare/vite-plugin')).cloudflare({
@@ -94,6 +94,18 @@ const config: UserConfigFnPromise = async ({ mode, command }) => ({
 
     port: 7712,
     strictPort: false,
+    ...(mode === 'tiny' ? { proxy: {
+      '/api/files/': {
+        target: process.env.INKSTONE_API_TARGET || 'http://127.0.0.1:8081',
+        changeOrigin: false,
+        rewrite: (path: string) => path.replace(/^\/api\/files\//, '/inkstone/files/'),
+      },
+      '/api/inkstone': {
+        target: process.env.INKSTONE_API_TARGET || 'http://127.0.0.1:8081',
+        changeOrigin: false,
+        rewrite: (path: string) => path.replace(/^\/api/, ''),
+      },
+    } } : {}),
   },
 
   preview: {
@@ -101,7 +113,7 @@ const config: UserConfigFnPromise = async ({ mode, command }) => ({
   },
 
   build: {
-    ...(mode === 'demo' ? { outDir: 'dist/demo' } : {}),
+    ...(mode === 'demo' ? { outDir: 'dist/demo' } : mode === 'tiny' ? { outDir: 'dist/client' } : {}),
     target: 'esnext',
     sourcemap: false,
     chunkSizeWarningLimit: 250,

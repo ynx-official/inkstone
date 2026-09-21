@@ -14,6 +14,11 @@ describe('extractTags', () => {
 describe('extractAttachmentIds', () => {
   const idA = '01m1r8923zajxnw9y0dhs6sy8j'
   const idB = '01m1r9qq6zb99ef3cqkjrzrn89'
+  it('recognizes shared Tiny UUID objects and browser adapter URLs', () => {
+    const id = '20a72340-1234-4234-8234-123456789abc'
+    expect(extractAttachmentIds(`![a](/api/files/${id}) ![b](/api/inkstone/files/${id})`)).toEqual([id])
+    expect(extractAttachmentIds(`![a](/api/files/${id}suffix)`)).toEqual([])
+  })
 
   it('collects plain and angle-bracket references outside code regions', () => {
     expect(extractAttachmentIds(

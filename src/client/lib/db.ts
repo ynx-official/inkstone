@@ -453,7 +453,7 @@ function isSiteInfo(value: unknown): value is SiteInfo {
     typeof value.registrationOpen === 'boolean' &&
     typeof value.r2Enabled === 'boolean' &&
     typeof value.kvEnabled === 'boolean' &&
-    (value.attachmentStorage === 'r2' || value.attachmentStorage === 'kv' || value.attachmentStorage === null) &&
+    (value.attachmentStorage === 'r2' || value.attachmentStorage === 'kv' || value.attachmentStorage === 's3' || value.attachmentStorage === null) &&
     typeof value.realtimeEnabled === 'boolean' &&
     typeof value.version === 'string'
 }

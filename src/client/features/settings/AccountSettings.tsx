@@ -11,6 +11,7 @@ import { useSession } from '../../store/session'
 import { useUi } from '../../store/ui'
 import { AvatarPicker } from './AvatarPicker'
 import { TotpSettings } from './TotpSettings'
+import { IS_TINY_BACKEND } from '../../lib/runtime'
 
 export function AccountSettings() {
   const user = useSession((state) => state.user)
@@ -26,7 +27,7 @@ export function AccountSettings() {
         </h3>
         <div className="space-y-2">
           <PasswordSection />
-          <TotpSettings />
+          {!IS_TINY_BACKEND && <TotpSettings />}
         </div>
       </section>
 
