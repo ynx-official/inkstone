@@ -10,8 +10,11 @@
 
 ```sh
 npm run dev
+npm run prod
 npm run build:prod
 ```
+
+`npm run prod` 启动本地 Vite 并加载 `.env.production`，连接生产 API；此命令不执行打包。
 
 开发页为 `http://localhost:7712`，`.env.development` 中的 `INKSTONE_API_TARGET` 默认代理至 `http://127.0.0.1:8081`。Go 在同级 `tiny-blog-go` 单独运行。端口固定，避免与 Go 的 Origin 白名单不一致。
 

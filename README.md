@@ -10,8 +10,11 @@ Use Node 24. Install dependencies only when missing or changed.
 
 ```sh
 npm run dev
+npm run prod
 npm run build:prod
 ```
+
+`npm run prod` starts local Vite with `.env.production` and the production API. It does not build the application.
 
 Development runs at `http://localhost:7712`. `.env.development` configures `INKSTONE_API_TARGET`, defaulting to `http://127.0.0.1:8081`. Run Go separately in the sibling `tiny-blog-go` repository.
 
