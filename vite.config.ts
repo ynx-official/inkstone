@@ -101,6 +101,11 @@ const config: UserConfigFnPromise = async ({ mode }) => {
           changeOrigin: false,
           rewrite: (path: string) => path.replace(/^\/api/, ''),
         },
+        '/api/auth': {
+          target: apiTarget,
+          changeOrigin: false,
+          rewrite: (path: string) => path.replace(/^\/api/, ''),
+        },
       } } : {}),
     },
 

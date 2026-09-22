@@ -7,9 +7,11 @@ describe('Tiny backend transport', () => {
     expect(backendFileUrl('/api/files/object-id', true, 'https://go.mrsunshine.cn/prod-api/')).toBe('https://go.mrsunshine.cn/prod-api/inkstone/files/object-id')
     expect(backendFileUrl('https://images.example/image.png', true, 'https://go.mrsunshine.cn/prod-api/')).toBe('https://images.example/image.png')
     expect(() => backendPath('/api/notes', true, 'https://name:secret@other.example/')).toThrow()
+    expect(backendPath('/api/auth/login', true, 'https://go.mrsunshine.cn/prod-api/')).toBe('https://go.mrsunshine.cn/prod-api/auth/login')
   })
   it('maps only local API paths and leaves the demo protocol alone', () => {
     expect(backendPath('/api/notes?q=a%20b', true)).toBe('/api/inkstone/notes?q=a%20b')
+    expect(backendPath('/api/auth/login', true)).toBe('/api/auth/login')
     expect(backendPath('/api/notes', false)).toBe('/api/notes')
     expect(() => backendPath('https://other.example/api/notes', true)).toThrow()
   })

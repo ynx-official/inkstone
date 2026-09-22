@@ -285,8 +285,16 @@ export const api = {
         method: 'POST',
         body: { username, password, locale },
       }),
-    login: (username: string, password: string) =>
-      request<PasswordLoginResult>('/api/auth/login', { method: 'POST', body: { username, password } }),
+    login: async (username: string, password: string): Promise<PasswordLoginResult> => {
+      if (!IS_TINY_BACKEND) {
+        return request<PasswordLoginResult>('/api/auth/login', { method: 'POST', body: { username, password } })
+      }
+      await request<{ accessToken: string; expiresIn: number; token: string; tokenType: string }>(
+        '/api/auth/login',
+        { method: 'POST', body: { username, password } },
+      )
+      return request<SessionInfo>('/api/auth/session')
+    },
     totp: {
       status: () => request<TotpStatus>('/api/auth/totp/status'),
       startSetup: (currentPassword: string) =>

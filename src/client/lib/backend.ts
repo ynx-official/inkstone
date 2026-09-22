@@ -9,7 +9,8 @@ export function backendPath(path: string, tiny = IS_TINY_BACKEND, base = API_BAS
     const url = new URL(base)
     if (url.username || url.password || url.search || url.hash || !['http:', 'https:'].includes(url.protocol)) throw new Error('Invalid API base URL')
   }
-  return `${base.replace(/\/+$/, '')}/inkstone/${path.slice(5)}`
+  const backendRoute = path === '/api/auth/login' ? path.slice(4) : `/inkstone/${path.slice(5)}`
+  return `${base.replace(/\/+$/, '')}${backendRoute}`
 }
 
 export function backendFileUrl(url: string, tiny = IS_TINY_BACKEND, base = API_BASE): string {
