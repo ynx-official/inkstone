@@ -18,7 +18,7 @@ npm run build:prod
 
 Development runs at `http://localhost:7712`. `.env.development` configures `INKSTONE_API_TARGET`, defaulting to `http://127.0.0.1:8081`. Run Go separately in the sibling `tiny-blog-go` repository.
 
-Production output is static content in `dist/client`. `.env.production` sets `VITE_API_BASE_URL` at build time; `.env` holds shared defaults and `.env.demo` configures the standalone demo. Use ignored `.env.development.local` and `.env.production.local` for personal overrides. Never put credentials in frontend environment files. Set `INKSTONE_PUBLIC_URL` on Go to the exact frontend origin. See [deployment](docs/05-operations/tiny-build-and-deployment.md).
+Production output is static content in `dist/client`. `.env.production` sets `VITE_API_BASE_URL` at build time; `.env` holds shared defaults and `.env.demo` configures the standalone demo. Use ignored `.env.development.local` and `.env.production.local` for personal overrides. Never put credentials in frontend environment files. Add the exact frontend origin to Go's `server.corsAllowedOrigins` and use `APP_ENV=prod` for production. See [deployment](docs/05-operations/tiny-build-and-deployment.md).
 
 `npm run build` aliases `build:prod`. `npm run preview` serves the existing production build without rebuilding. `dev:demo` and `build:demo` retain the standalone demo.
 

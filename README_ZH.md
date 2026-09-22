@@ -20,7 +20,7 @@ npm run build:prod
 
 构建产物为 `dist/client`，按静态站点部署。`.env.production` 设置生产 `VITE_API_BASE_URL`；`.env` 为公共默认值，`.env.demo` 用于独立演示。个人覆盖放入 `.env.development.local` 或 `.env.production.local`，这些文件不提交。前端变量不得存放密码、数据库连接或 S3 密钥。
 
-`npm run build` 等同于 `build:prod`；`npm run preview` 预览已有生产产物，不会重新构建。演示模式使用 `dev:demo` / `build:demo`。Go 的 `INKSTONE_PUBLIC_URL` 必须与部署前端 Origin 一致。详见[构建与部署](docs/05-operations/tiny-build-and-deployment.md)。
+`npm run build` 等同于 `build:prod`；`npm run preview` 预览已有生产产物，不会重新构建。演示模式使用 `dev:demo` / `build:demo`。Go 统一在 `server.corsAllowedOrigins` 中配置前端 Origin；正式服务使用 `APP_ENV=prod`。详见[构建与部署](docs/05-operations/tiny-build-and-deployment.md)。
 
 ## 当前状态
 
